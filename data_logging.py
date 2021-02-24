@@ -20,7 +20,7 @@ class NeuroSkyLogger():
         self.folderPath = folderPath
         
     def setupCSV(self):
-        self.fieldnames = ["time", "attention", "contact"]
+        self.fieldnames = ["time", "attention", "blink strength", "meditation", "contact"]
         file_count = sum(len(files) for _, _, files in os.walk(os.path.join(self.folderPath, "data")))
         self.filePath = os.path.join(os.path.join(self.folderPath, "data", "data_{}.csv".format(file_count + 1)))
 
@@ -52,19 +52,25 @@ class NeuroSkyLogger():
             
             # t = sample_count * self.dt
             attn = neuropy.attention
+            bs = neuropy.blinkStrength
+            med = neuropy.meditation
             contact = neuropy.poorSignal
             t = time.time() - start
 
-            # print(t)
             #wait for 20 seconds for neurosky to start reliable transmission
             if t > 20:
                 if count_down:
+                    if contact != 0:
+                        print("Poor connection...")
+                        break
                     with open(self.filePath, 'a', newline='') as csv_file:
                         csv_writer = csv.DictWriter(csv_file, fieldnames=self.fieldnames)
 
                         info = {
-                            "time": t,
+                            "time": t - 30,
                             "attention": attn,
+                            "blink strength": bs,
+                            "meditation": med,
                             "contact": contact
                         }
                         csv_writer.writerow(info)
@@ -87,7 +93,7 @@ class NeuroSkyLogger():
 
 if __name__ == "__main__":
 
-    comm_port = "COM5"
+    comm_port = "COM6"
     fs = 5 #Hz
     folderPath = os.path.join("D:", "Semester8", "RE", "experiments", "neurosky_testing")
 

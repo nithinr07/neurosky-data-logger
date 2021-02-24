@@ -18,12 +18,16 @@ def animate(i):
     data = pd.read_csv(filePath)
     time = data['time']
     attention = data['attention']
+    bs = data['blink strength']
+    meditation = data['meditation']
 
     plt.cla()
-    plt.plot(time, attention)
+    att_signal = plt.plot(time, attention)
+    med_signal = plt.plot(time, meditation)
     plt.title('Attention signal')
     plt.xlabel('Time (s)')
-    plt.ylabel('Attention')
+    plt.ylabel('Amplitude')
+    plt.legend(['Attention', 'Meditation'], loc = 'upper right')
     # plt.savefig(os.path.join(folderPath, "graphs", "graph_{}.csv".format(file_count)))
 
 plt_real_time = FuncAnimation(plt.gcf(), animate, 1)
